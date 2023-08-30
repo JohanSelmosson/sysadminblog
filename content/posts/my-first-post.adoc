@@ -10,19 +10,24 @@ draft: true
 == Intro
 
 Hello!
-My name is Johan Selmosson. 
-I´ve been working in IT for the better part of my adult life. 
-I started out as a tier 1 support tech where i did basic user support (did you try turning it on and off again?) and I´ve gradually progressed to to a role where I both get to troubleshoot problems that are well beyond the "did you try to reboot it?"-stage and also try to figure out how to implement new "stuff".
-So... there is nothing unique going on here, I work as a sysadmin and i find it both challenging and fun.
+My name is Johan Selmosson and I've been working in IT for the better part of my adult life. 
+I started out as a tier 1 support tech where i did basic user support (did you try turning it on and off again?) and then gradually progressed to to a role where I both get to troubleshoot problems that are well beyond the "did you try to reboot it?"-stage and also try to figure out how to implement new "stuff" rather than figuring out what´s wrong with something built by someone else. 
+What usually happens know is that I'm approached with problems that I had a big part in creating, it's quite humbling to be honest.
+So... Yeah, there is nothing unique going on here, I work as a sysadmin and i find it both challenging and fun.
 
-Like all other sysadmins i´ve been leaning a lot on google/bing/duckduckgo etc when i try to figure out something about what i´m currently working on.
-A few searches while trying to figure out which searchterms that would lead me to the forum posts, stack exchange answers or blogs that gives the next clue on how to progress is usually a big part of the job. But it must be said that the search engines are important but not compared to all the small nuggets of info that are out there, google did not create those.
+Like all other sysadmins I'm leaning a lot on google/bing/duckduckgo etc when i try to figure out something about what i´m currently working on.
+A few searches while trying to figure out which search terms that would lead me to the forum posts, stack exchange answers or blogs that gives the next clue on how to progress is usually a big part of the job. 
+But it must be said that the search engines are important but all the small nuggets of info that are out there, google did not create those.
 
-For a while know I´ve felt that maybe i too should try to do my part in contributing some of the crumbs and pieces of knowledge I stumbled upon while trying to figure stuff out, especially those times where i could not find a solution to my problem online or from colleagues.
-This blog is my attempt at giving back a little bit. And yeah, i suppose we should not downplay how much this endeavour is driven by vanity either :) 
+For a while know I've felt that maybe i too should try to do my part in contributing some of the crumbs and pieces of knowledge I stumbled upon while trying too figure stuff out, especially those times where i could not find a solution to my problem online or from colleagues.
+Not to mention all bad advice resulting from misconceptions or info that is just dated.
+This blog is my attempt at giving back a little bit and I'll try my best to only share stuff I think is worth sharing.
+
+And yeah, I suppose we should not downplay how much this endeavour is driven by vanity. 
+(No, lets not, vanity definitely plays a huge part here.. )
 
 Hopefully somebody out there finds something here that is useful to them.
-No matter if it is´nt, it is still a learning experience for me to create a blog and try to get better at writing (that is also one of the reasons i´m creating this site.)
+No matter if it or not , it is still a learning experience for me to create a blog and try to get better at writing (that is also one of the reasons i´m creating this site.)
 
 Well enough about why this site exists.
 
@@ -66,7 +71,6 @@ For example admonitions like this note here works out of the box, which is nice.
 ----
 hugo new site sysadminblog
 cd sysadminblog/
-git init
 mkdir -p themes/hugo-geekblog/
 curl -L https://github.com/thegeeklab/hugo-geekblog/releases/latest/download/hugo-geekblog.tar.gz | tar -xz -C themes/hugo-geekblog/ --strip-components=1
 ----
@@ -162,4 +166,70 @@ hugo server --buildDrafts --buildFuture
 ----
 
 Hopefully you'll find that it looks *exactly* like this blog.
+
+== Create a Github Repo.
+
+Next step is checking in the site to a central repo.
+
+[NOTE]
+I´m using github but it should work pretty much the same way if you're using gitlab or other similar platforms. 
+
+Start with creating a repo using the github web GUI.
+Do not create a readme, leave the repo empty and uninitialized.
+
+I won´t tell you exactly how to create the repo since the UI is likely to change sooner or later causing this blog post to age like milk. 
+
+Also, create a Personal Access Token, you can find the setting under *Settings* -> *Developer* -> *Tokens (classic)*. 
+Here is a direct link to the Settings page for https://github.com/settings/tokens[Personal Access Token] if you are already signed in.
+
+Just put the key at the end of any random text file you have opened in notepad. 
+This is the way. 
+No! Just kidding. 
+Of course you'll use your favorite password manager, we're not savages.
+
+The token should have access to your repos. The rest of the permissions are not needed.
+
+Initialize the git credential helper file.
+To be honest i don´t fully understand this part, i think this how you avoid having to provide your credentials to git every time you try to push your local copy of the repo to central repo.
+
+[source,bash]
+git config --global credential.helper 'store --file ~/.my-credentials'  
+git config --global credential.helper cache
+
+
+create a file named *.gitignore* and add this to it: 
+
+[source]
+----
+### Hugo ###
+# Generated files by hugo
+/public/
+/resources/_gen/
+/assets/jsconfig.json
+hugo_stats.json
+
+# Executable may be added to repository
+hugo.exe
+hugo.darwin
+hugo.linux
+
+# Temporary lock file while building
+/.hugo_build.lock
+----
+
+Now we'll commit the blog files to the repo.
+
+[source,bash]
+----
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/JohanSelmosson/sysadminblog.git <.>
+git push -u origin main <.>
+----
+<.> Replace this URL with the URL to your own repo.
+<.> Git will ask for a username and password, in my case the username is JohanSelmosson and the password is the personal access token created before.
+
+
 
