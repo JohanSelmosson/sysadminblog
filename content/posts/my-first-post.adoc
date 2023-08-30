@@ -1,0 +1,165 @@
+---
+title: "Bootstrapping this blog"
+date: 2023-08-15T21:38:29+02:00
+draft: true
+---
+//:source-highlighter: rouge
+//:rouge-style: molokai
+:icons: font 
+
+== Intro
+
+Hello!
+My name is Johan Selmosson. 
+I´ve been working in IT for the better part of my adult life. 
+I started out as a tier 1 support tech where i did basic user support (did you try turning it on and off again?) and I´ve gradually progressed to to a role where I both get to troubleshoot problems that are well beyond the "did you try to reboot it?"-stage and also try to figure out how to implement new "stuff".
+So... there is nothing unique going on here, I work as a sysadmin and i find it both challenging and fun.
+
+Like all other sysadmins i´ve been leaning a lot on google/bing/duckduckgo etc when i try to figure out something about what i´m currently working on.
+A few searches while trying to figure out which searchterms that would lead me to the forum posts, stack exchange answers or blogs that gives the next clue on how to progress is usually a big part of the job. But it must be said that the search engines are important but not compared to all the small nuggets of info that are out there, google did not create those.
+
+For a while know I´ve felt that maybe i too should try to do my part in contributing some of the crumbs and pieces of knowledge I stumbled upon while trying to figure stuff out, especially those times where i could not find a solution to my problem online or from colleagues.
+This blog is my attempt at giving back a little bit. And yeah, i suppose we should not downplay how much this endeavour is driven by vanity either :) 
+
+Hopefully somebody out there finds something here that is useful to them.
+No matter if it is´nt, it is still a learning experience for me to create a blog and try to get better at writing (that is also one of the reasons i´m creating this site.)
+
+Well enough about why this site exists.
+
+This first post describes the steps i took (am taking) to create this blog, it´s both for you out there who might be trying to do something similar or to be completely honest, also for my own use if the blog for any reason blows up so i need to rebuild it.
+I'd hate to do this again from scratch :)
+
+There are a few blog posts out there that this was based on but I have not seen a guide that covers all the steps from installing the prerequisites, creating a site and finally publishing it on a local nginx server so that is what I'll aim for here.
+
+== Goals
+
+Before i begin it´s nice to define the scope of the project.
+
+* I want to write blog posts using asciidoc.
+* I want to be able to publish the site on my personal server using Caddy (or maybe nginx).
+* The site should be checked into a git repo for version control and backups.
+* The site should be automatically updated when I check in new content into the main branch.
+* I don´t know very much about CSS and HTML and I prefer to keep it that way, i care more about the content than the presentation.
+
+== Prerequisites
+
+Ubuntu Server (I used Ubuntu 20.04 because that was what i had available on my Windows Laptop using WSL, it´s not the most recent release but I hope it won´t matter much)
+
+Let´s get the first steps out of the way immediately.
+
+First we install the required software components needed to create the site.
+
+[source,bash]
+----
+sudo apt install git
+sudo apt install hugo
+sudo apt install asciidoctor
+----
+
+Now it´s time to create the new site and add a theme to it.
+I've chosen to use *hugo-geekblog* since it has a dark mode that can be toggled and it also seems to work quite alright with asciidoc.
+
+[NOTE]
+For example admonitions like this note here works out of the box, which is nice. I like admonitions.
+
+[source,bash]
+----
+hugo new site sysadminblog
+cd sysadminblog/
+git init
+mkdir -p themes/hugo-geekblog/
+curl -L https://github.com/thegeeklab/hugo-geekblog/releases/latest/download/hugo-geekblog.tar.gz | tar -xz -C themes/hugo-geekblog/ --strip-components=1
+----
+
+
+Open config.toml in the root of the site folder, clear the file and paste this into it:
+
+[source,toml]
+----
+baseURL = "https://blog.labbet.xyz"
+title = "Poking Stuff"
+theme = "hugo-geekblog"
+
+pluralizeListTitles = false
+
+# Geekblog required configuration
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+disablePathToLower = true
+
+# Needed for mermaid shortcodes
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.tableOfContents]
+    startLevel = 1
+    endLevel = 9
+
+[taxonomies]
+  author = "authors"
+  tag = "tags"
+
+[mediaTypes]
+  [mediaTypes."application/atom+xml"]
+    suffixes = ["xml"]
+
+[outputFormats]
+  [outputFormats.Atom]
+    name = "Atom"
+    mediaType = "application/atom+xml"
+    baseName = "feed"
+    isPlainText = false
+    rel = "alternate"
+    isHTML = false
+    noUgly = true
+    permalinkable = false
+
+[outputs]
+  home = ["HTML", "ATOM"]
+  page = ["HTML"]
+  section = ["HTML"]
+  taxonomy = ["HTML"]
+  term = ["HTML", "ATOM"]
+----
+
+[NOTE]
+Press `i` in vim to enter insert mode and press CTRL+SHIFT+V to paste if you´re using windows terminal and finally ESC to leave insert mode and type `:wq` to quit and save. If you prefer another editor please go ahead and use that instead (I won´t judge).
+
+
+Now we should be ready to create and edit our first post.
+First we create the article, then we open the newly created asciidoc document using vim.
+
+[source,bash]
+----
+hugo new posts/my-first-post.adoc
+vim content/posts/my-first-post.adoc
+----
+
+[NOTE]
+It is still completely fine to use any other editor than vim if you prefer that.
+
+[source,asciidoc]
+----
+---
+title: "My First Post"
+date: 2023-08-15T21:38:29+02:00
+draft: true
+---
+:icons: font
+
+
+[NOTE]
+====
+There are things to note!
+====
+----
+
+Start the hugo server with the command below and then open http://localhost:1313 using a local browser.
+
+[source,bash]
+----
+hugo server --buildDrafts --buildFuture
+----
+
+Hopefully you'll find that it looks *exactly* like this blog.
+
